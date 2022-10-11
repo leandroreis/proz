@@ -1,15 +1,16 @@
 import express from 'express';
 import path from 'path';
 import Joi from 'joi';
-import * as cpf from "@fnando/cpf";
+import {isValid} from "@fnando/cpf";
 
 import db from '../../database/postgres.js'
 
 const router = express.Router();
 
+// Show xlsx by id
 router.get('/student/xlsx/:id', async (req, res, next) => {
   const id = req.params.id;
-  const sql = "select * from imports where id = $1";
+  const sql = "SELECT * FROM imports WHERE id = $1";
   const file = await db.oneOrNone(sql, [id]);
 
   if (!file) {
@@ -21,6 +22,7 @@ router.get('/student/xlsx/:id', async (req, res, next) => {
   res.json(file);
 });
 
+// Upload xlsx file
 router.post('/student/xlsx', async (req, res, next) => {
   if (!req.files) {
     return res.status(400).json({
@@ -38,15 +40,18 @@ router.post('/student/xlsx', async (req, res, next) => {
   res.json({ id: file.id });
 });
 
+// List of students
 router.get('/student', async (req, res, next) => {
-  const sql = "select * from students";
-  const result = await db.query(sql, []);
-  res.json(result);
+  // TODO: Paginação
+  const sql = "SELECT * FROM students";
+  const list = await db.query(sql);
+  res.json(list);
 });
 
+// Show student by id
 router.get('/student/:id', async (req, res, next) => {
   const id = req.params.id;
-  const sql = "select * from students where id = $1";
+  const sql = "SELECT * FROM students WHERE id = $1";
   const student = await db.oneOrNone(sql, [id]);
 
   if (!student) {
@@ -58,7 +63,7 @@ router.get('/student/:id', async (req, res, next) => {
   res.json(student);
 });
 
-// PUT /api/v1/student/:id
+// Update student by id
 router.put('/student/:id', async (req, res, next) => {
   const schema = Joi.object({
     gender_id: Joi.string()
@@ -79,7 +84,7 @@ router.put('/student/:id', async (req, res, next) => {
     doc_cpf: Joi.string()
       .pattern(/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}$/)
       .custom((value, helpers) => {
-        if (!cpf.isValid(value)) {
+        if (!isValid(value)) {
           throw new Error('the cpf is invalid');
         }
         return value;
@@ -98,7 +103,7 @@ router.put('/student/:id', async (req, res, next) => {
   }
 
   const id = req.params.id;
-  const sqlSelect = "select * from students where id = $1";
+  const sqlSelect = "SELECT * FROM students WHERE id = $1";
   const student = await db.oneOrNone(sqlSelect, [id]);
 
   if (!student) {
@@ -124,10 +129,19 @@ router.put('/student/:id', async (req, res, next) => {
   res.json({ id: id });
 });
 
-// DELETE /api/v1/student/:id
+// Delete student by id
 router.delete('/student/:id', async (req, res, next) => {
   const id = req.params.id;
-  res.json('DELETE /student/:id ' + id);
+  const sql = "DELETE FROM students WHERE id = $1 RETURNING id";
+  const student = await db.oneOrNone(sql, id);
+  
+  if (!student) {
+    return res.status(404).json({
+      message: 'Student not found'
+    });
+  }
+
+  res.json({ id: id });
 });
 
 export default router;
