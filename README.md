@@ -7,3 +7,4 @@ Cadastro de aluno
 # TODO
 [] Subir o postman.json
 [] Incluir doc de como rodar 
+[] Validação com JOY
