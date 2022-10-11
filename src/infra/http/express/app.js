@@ -1,4 +1,5 @@
 import express, { json, urlencoded } from 'express';
+import fileUpload from 'express-fileupload';
 import logger from 'morgan';
 import router from './router.js';
 
@@ -7,16 +8,21 @@ const app = express();
 app.use(logger('dev'));
 app.use(json());
 app.use(urlencoded({ extended: false }));
-app.use('/', router);
+app.use(fileUpload({createParentPath: true}));
+app.use('/api/v1', router);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  res.status(404).send('Page not found');
+  res.status(404).send({
+    message: 'Page not found'
+  });
   next();
 });
 
 // error handler
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
+  console.log('err.message ===>',  err.message)
+  console.log('req.app.get("env") ===>',  req.app.get('env'))
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

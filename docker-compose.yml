@@ -7,12 +7,14 @@ services:
     restart: always
     volumes:
       - ./src/:/src
+      - uploads:${UPLOADS_PATH}
     command: npm run start:dev
     ports:
       - ${API_PORT}:${API_PORT}
     environment:
       NODE_ENV: development
       DEBUG: nodejs-docker-express:*
+      UPLOADS_PATH: ${UPLOADS_PATH}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
@@ -48,3 +50,4 @@ secrets:
     
 volumes:
   pgdata: {}
+  uploads: {}

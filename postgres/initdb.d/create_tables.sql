@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS "students";
 
 CREATE TABLE "imports" (
   "id" SERIAL PRIMARY KEY,
-  "file_name" varchar(10) NOT NULL,
+  "file_name" varchar(20) NOT NULL,
   "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
   "generated_success" BOOLEAN,
   "generated_at" TIMESTAMP
@@ -29,7 +29,7 @@ CREATE TABLE "students" (
   "name" varchar(255) NOT NULL,
   "email" varchar(255) NOT NULL,
   "doc_cpf" varchar(14) NOT NULL,
-  "doc_rg" varchar(10) NOT NULL,
+  "doc_rg" varchar(20) NOT NULL,
   "birth_date" DATE NOT NULL,
   "updated_at" TIMESTAMP,
 
