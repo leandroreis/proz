@@ -21,8 +21,6 @@ app.use((req, res, next) => {
 
 // error handler
 app.use((err, req, res, next) => {
-  console.log('err.message ===>',  err.message)
-  console.log('req.app.get("env") ===>',  req.app.get('env'))
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
