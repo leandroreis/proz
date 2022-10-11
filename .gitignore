@@ -105,3 +105,6 @@ dist
 
 # asdf
 .tool-versions
+
+# Num cenário real o arquivo .env não deve ser versionado. 
+# Nesse caso basta adicionar o ".env" nesse arquivo.
